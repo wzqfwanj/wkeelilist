@@ -13,8 +13,10 @@
         {
           "id": "vtodo",
           "name": "vtodo",
-          "description": "童话风格 Todo 管理器",
-          "url": "https://wkeeli.cn/vtodo/"
+          "description": "童话风格 Todo 管理器 · 登录后使用",
+          "url": "https://wkeeli.cn/vtodo/",
+          "probe_url": "https://wkeeli.cn/vtodo/api/todos",
+          "auth": true
         },
         {
           "id": "vnote",
