@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>wkeeli · 在线服务</title>
+  <link rel="stylesheet" href="static/style.css" />
+</head>
+<body>
+  <main>
+    <header class="head">
+      <div>
+        <h1>wkeeli <span class="dim">/ 在线服务</span></h1>
+        <p class="sub">服务器上运行的公网服务 · <span id="summary">加载中…</span></p>
+      </div>
+      <button id="theme" type="button" aria-label="切换明暗主题">暗色</button>
+    </header>
+
+    <div id="list"></div>
+
+    <footer>
+      <span id="checked">—</span>
+      <noscript>需要启用 JavaScript 才能查看实时状态。</noscript>
+    </footer>
+  </main>
+
+  <script src="static/app.js"></script>
+</body>
+</html>

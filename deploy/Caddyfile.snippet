@@ -1,0 +1,7 @@
+# 在线服务列表 —— 放在 /etc/caddy/Caddyfile 的 wkeeli.cn { ... } 块内
+# 注意：Caddy 的 handle_path 会剥掉 /lst 前缀，后端因此收到 /、/static/...、/api/services
+
+redir /lst /lst/ 308
+handle_path /lst/* {
+    reverse_proxy 127.0.0.1:8330
+}

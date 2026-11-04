@@ -1,0 +1,124 @@
+{
+  "groups": [
+    {
+      "id": "apps",
+      "label": "应用",
+      "services": [
+        {
+          "id": "vgame",
+          "name": "vgame",
+          "description": "Heavenly Kingdom · 文字剧情游戏",
+          "url": "https://wkeeli.cn/vgame/"
+        },
+        {
+          "id": "vtodo",
+          "name": "vtodo",
+          "description": "童话风格 Todo 管理器",
+          "url": "https://wkeeli.cn/vtodo/"
+        },
+        {
+          "id": "vnote",
+          "name": "vnote",
+          "description": "轻量笔记 · 本地笔记管理",
+          "url": "https://wkeeli.cn/vnote/"
+        },
+        {
+          "id": "yt",
+          "name": "视频总结",
+          "description": "视频字幕提取与内容总结（YouTube / B站）",
+          "url": "https://wkeeli.cn/yt/"
+        },
+        {
+          "id": "pdf2ppt",
+          "name": "PDF → PPTX",
+          "description": "PDF 转可编辑 PPTX · 文字 / 图片 / 图形 / 表格保留为原生对象",
+          "url": "https://wkeeli.cn/pdf2ppt/"
+        },
+        {
+          "id": "supersys",
+          "name": "supersys",
+          "description": "个人每日系统 · 邮箱验证码登录",
+          "url": "https://wkeeli.cn/supersys/",
+          "auth": true
+        }
+      ]
+    },
+    {
+      "id": "admin",
+      "label": "管理台",
+      "services": [
+        {
+          "id": "pyenv",
+          "name": "pyenv",
+          "description": "Python 环境管理器 · Web 终端",
+          "url": "https://wkeeli.cn/pyenv/",
+          "auth": true
+        },
+        {
+          "id": "jd",
+          "name": "JD 分析",
+          "description": "岗位 JD 分析系统 · 截图提取岗位、联网调研公司",
+          "url": "https://wkeeli.cn/jd/",
+          "auth": true
+        },
+        {
+          "id": "dsh",
+          "name": "DSH",
+          "description": "DSH Web GUI · 远程终端 / 代理入口",
+          "url": "https://dsh.wkeeli.cn/",
+          "auth": true
+        },
+        {
+          "id": "attu",
+          "name": "Attu",
+          "description": "Milvus 向量库管理界面",
+          "url": "https://attu.wkeeli.cn/",
+          "auth": true
+        },
+        {
+          "id": "redis-insight",
+          "name": "Redis Insight",
+          "description": "Redis 可视化管理界面",
+          "url": "https://redis.wkeeli.cn/",
+          "auth": true
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "label": "接口",
+      "services": [
+        {
+          "id": "catalog",
+          "name": "工具目录",
+          "description": "Agent 工具目录 JSON · 按 call_url 发现并调用站内工具",
+          "url": "https://wkeeli.cn/"
+        },
+        {
+          "id": "yt-mcp",
+          "name": "YT MCP",
+          "description": "YouTube 字幕 MCP 服务 · 供 Agent 调用",
+          "url": "https://wkeeli.cn/yt/mcp"
+        },
+        {
+          "id": "pw",
+          "name": "Playwright",
+          "description": "无头浏览器服务 API · /pw/run 支持多步操作",
+          "url": "https://wkeeli.cn/pw/"
+        },
+        {
+          "id": "vkb",
+          "name": "视频知识库",
+          "description": "视频知识库检索 API · Dify 外部知识库",
+          "url": "https://wkeeli.cn/vkb/"
+        },
+        {
+          "id": "dify",
+          "name": "Dify",
+          "description": "Dify Chat API 反向代理 · notion-chat 使用",
+          "url": "https://wkeeli.cn/dify/"
+        }
+      ]
+    }
+  ]
+}
