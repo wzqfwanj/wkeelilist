@@ -116,10 +116,14 @@ def api_services():
                 svc["id"], {"state": "unknown", "code": None, "latency_ms": None}
             )
             state = result["state"]
+            # 已知需要登录的服务：探测到 200（登录页）也统一显示「需登录」
+            if svc.get("auth") and state == "online":
+                state = "auth"
             if state in counts:
                 counts[state] += 1
             item = {key: value for key, value in svc.items() if key != "probe_url"}
             item.update(result)
+            item["state"] = state
             services.append(item)
         payload_groups.append({"id": group["id"], "label": group["label"], "services": services})
 

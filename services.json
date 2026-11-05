@@ -42,6 +42,20 @@
           "description": "个人每日系统 · 邮箱验证码登录",
           "url": "https://wkeeli.cn/supersys/",
           "auth": true
+        },
+        {
+          "id": "schedul",
+          "name": "Schedul",
+          "description": "极简黑白日程表 · 月历 / 当天事件 / 截图收纳",
+          "url": "https://wkeeli.cn/schedul/",
+          "auth": true
+        },
+        {
+          "id": "superrecord",
+          "name": "Superrecord",
+          "description": "面试录制 · 浏览器分片录制上传 OSS，录制文件可回放 / 下载",
+          "url": "https://wkeeli.cn/record/",
+          "auth": true
         }
       ]
     },
