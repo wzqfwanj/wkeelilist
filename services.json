@@ -5,12 +5,6 @@
       "label": "应用",
       "services": [
         {
-          "id": "vgame",
-          "name": "vgame",
-          "description": "Heavenly Kingdom · 文字剧情游戏",
-          "url": "https://wkeeli.cn/vgame/"
-        },
-        {
           "id": "vtodo",
           "name": "vtodo",
           "description": "童话风格 Todo 管理器 · 登录后使用",
@@ -56,6 +50,57 @@
           "description": "面试录制 · 浏览器分片录制上传 OSS，录制文件可回放 / 下载",
           "url": "https://wkeeli.cn/record/",
           "auth": true
+        },
+        {
+          "id": "arch",
+          "name": "Architecture",
+          "description": "极简架构图绘制工具 · 登录后使用",
+          "url": "https://wkeeli.cn/arch/",
+          "auth": true
+        },
+        {
+          "id": "review",
+          "name": "面试复盘",
+          "description": "面试录屏 → 双角色字幕 + 逐条分析 · 可导出 Markdown / SRT / JSON",
+          "url": "https://wkeeli.cn/review/",
+          "auth": true
+        },
+        {
+          "id": "plan",
+          "name": "计划",
+          "description": "极简计划清单 · 一行一条，勾选即完成",
+          "url": "https://wkeeli.cn/plan/",
+          "auth": true
+        }
+      ]
+    },
+    {
+      "id": "games",
+      "label": "游戏",
+      "services": [
+        {
+          "id": "vgame",
+          "name": "vgame",
+          "description": "Heavenly Kingdom · 文字剧情游戏",
+          "url": "https://wkeeli.cn/vgame/"
+        },
+        {
+          "id": "airplane",
+          "name": "Star Battle",
+          "description": "飞机大战射击小游戏",
+          "url": "https://wkeeli.cn/airplane/"
+        },
+        {
+          "id": "gomoku",
+          "name": "联机小游戏",
+          "description": "五子棋 / 连连看 / 大富翁 · 创建房间联机对战",
+          "url": "https://wkeeli.cn/gomoku/"
+        },
+        {
+          "id": "pixel",
+          "name": "像素闯关",
+          "description": "像素平台闯关 · 战士冒险小游戏",
+          "url": "https://wkeeli.cn/pixel/"
         }
       ]
     },
@@ -121,18 +166,6 @@
           "name": "Playwright",
           "description": "无头浏览器服务 API · /pw/run 支持多步操作",
           "url": "https://wkeeli.cn/pw/"
-        },
-        {
-          "id": "vkb",
-          "name": "视频知识库",
-          "description": "视频知识库检索 API · Dify 外部知识库",
-          "url": "https://wkeeli.cn/vkb/"
-        },
-        {
-          "id": "dify",
-          "name": "Dify",
-          "description": "Dify Chat API 反向代理 · notion-chat 使用",
-          "url": "https://wkeeli.cn/dify/"
         }
       ]
     }
