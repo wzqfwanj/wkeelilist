@@ -52,6 +52,13 @@
           "auth": true
         },
         {
+          "id": "supercut",
+          "name": "Supercut",
+          "description": "极简在线剪视频工具 · 登录后使用",
+          "url": "https://wkeeli.cn/supercut/",
+          "auth": true
+        },
+        {
           "id": "arch",
           "name": "Architecture",
           "description": "极简架构图绘制工具 · 登录后使用",
