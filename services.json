@@ -38,20 +38,6 @@
           "auth": true
         },
         {
-          "id": "schedul",
-          "name": "Schedul",
-          "description": "极简黑白日程表 · 月历 / 当天事件 / 截图收纳",
-          "url": "https://wkeeli.cn/schedul/",
-          "auth": true
-        },
-        {
-          "id": "superrecord",
-          "name": "Superrecord",
-          "description": "面试录制 · 浏览器分片录制上传 OSS，录制文件可回放 / 下载",
-          "url": "https://wkeeli.cn/record/",
-          "auth": true
-        },
-        {
           "id": "supercut",
           "name": "Supercut",
           "description": "极简在线剪视频工具 · 登录后使用",
@@ -78,12 +64,6 @@
           "description": "极简计划清单 · 一行一条，勾选即完成",
           "url": "https://wkeeli.cn/plan/",
           "auth": true
-        },
-        {
-          "id": "supernav",
-          "name": "SuperNav",
-          "description": "多段交通规划 · 公交 / 打车 / 驾车路线与费用估算",
-          "url": "https://wkeeli.cn/supernav/"
         },
         {
           "id": "pc2mb",
@@ -147,13 +127,6 @@
           "name": "pyenv",
           "description": "Python 环境管理器 · Web 终端",
           "url": "https://wkeeli.cn/pyenv/",
-          "auth": true
-        },
-        {
-          "id": "jd",
-          "name": "JD 分析",
-          "description": "岗位 JD 分析系统 · 截图提取岗位、联网调研公司",
-          "url": "https://wkeeli.cn/jd/",
           "auth": true
         },
         {
