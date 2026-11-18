@@ -84,6 +84,13 @@
           "name": "SuperNav",
           "description": "多段交通规划 · 公交 / 打车 / 驾车路线与费用估算",
           "url": "https://wkeeli.cn/supernav/"
+        },
+        {
+          "id": "pc2mb",
+          "name": "pc2mb",
+          "description": "浏览器远程控制本机 Windows 桌面 · 账号密码登录",
+          "url": "https://wkeeli.cn/pc2mb/",
+          "auth": true
         }
       ]
     },
