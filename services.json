@@ -91,6 +91,13 @@
           "description": "浏览器远程控制本机 Windows 桌面 · 账号密码登录",
           "url": "https://wkeeli.cn/pc2mb/",
           "auth": true
+        },
+        {
+          "id": "paotui",
+          "name": "跑腿",
+          "description": "同城跑腿下单 · 美团跑腿地址 / 询价 / 比价 / 下单 / 查单",
+          "url": "https://wkeeli.cn/paotui/",
+          "auth": true
         }
       ]
     },
