@@ -9,19 +9,27 @@
 
   var STATE_LABEL = { online: "在线", auth: "需登录", down: "异常", unknown: "未知" };
 
-  /* ---------- 明暗主题 ---------- */
+  /* ---------- 主题（明 / 灰 / 暗） ---------- */
+
+  var THEMES = ["light", "gray", "dark"];
+  var THEME_LABEL = { light: "亮色", gray: "灰色", dark: "暗色" };
 
   function applyTheme(theme) {
     root.dataset.theme = theme;
-    themeBtn.textContent = theme === "dark" ? "亮色" : "暗色";
-    themeBtn.setAttribute("aria-label", theme === "dark" ? "切换到亮色主题" : "切换到暗色主题");
+    var next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    themeBtn.textContent = THEME_LABEL[next];
+    themeBtn.setAttribute("aria-label", "切换到" + THEME_LABEL[next] + "主题");
+  }
+
+  function isTheme(value) {
+    return THEMES.indexOf(value) !== -1;
   }
 
   function initialTheme() {
     var param = new URLSearchParams(location.search).get("theme");
-    if (param === "light" || param === "dark") return param;
+    if (isTheme(param)) return param;
     var saved = localStorage.getItem("wkeeli-theme");
-    if (saved === "light" || saved === "dark") return saved;
+    if (isTheme(saved)) return saved;
     return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
@@ -30,7 +38,8 @@
   applyTheme(initialTheme());
 
   themeBtn.addEventListener("click", function () {
-    var next = root.dataset.theme === "dark" ? "light" : "dark";
+    var current = root.dataset.theme;
+    var next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
     localStorage.setItem("wkeeli-theme", next);
     applyTheme(next);
   });
