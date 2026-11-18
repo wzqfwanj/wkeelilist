@@ -2,7 +2,7 @@
   "use strict";
 
   var root = document.documentElement;
-  var themeBtn = document.getElementById("theme");
+  var themeBtns = document.querySelectorAll(".theme-switch button");
   var listEl = document.getElementById("list");
   var summaryEl = document.getElementById("summary");
   var checkedEl = document.getElementById("checked");
@@ -12,13 +12,12 @@
   /* ---------- 主题（明 / 灰 / 暗） ---------- */
 
   var THEMES = ["light", "gray", "dark"];
-  var THEME_LABEL = { light: "亮色", gray: "灰色", dark: "暗色" };
 
   function applyTheme(theme) {
     root.dataset.theme = theme;
-    var next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
-    themeBtn.textContent = THEME_LABEL[next];
-    themeBtn.setAttribute("aria-label", "切换到" + THEME_LABEL[next] + "主题");
+    themeBtns.forEach(function (btn) {
+      btn.setAttribute("aria-pressed", btn.dataset.themeValue === theme ? "true" : "false");
+    });
   }
 
   function isTheme(value) {
@@ -37,11 +36,12 @@
 
   applyTheme(initialTheme());
 
-  themeBtn.addEventListener("click", function () {
-    var current = root.dataset.theme;
-    var next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
-    localStorage.setItem("wkeeli-theme", next);
-    applyTheme(next);
+  themeBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var theme = btn.dataset.themeValue;
+      localStorage.setItem("wkeeli-theme", theme);
+      applyTheme(theme);
+    });
   });
 
   /* ---------- 渲染 ---------- */
