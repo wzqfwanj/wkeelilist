@@ -15,6 +15,15 @@
   - ○ 异常：HTTP 5xx 或连接失败（附带状态码）
 - 明暗主题切换，选择保存在浏览器 localStorage，默认跟随系统
 
+## 访问控制
+
+- **整站统一 Basic Auth**：`wkeeli.cn` 站点级一道账号密码（用户名 `wkeeli`，复用原 `/job/` 的凭据）。浏览器访问任意页面输入一次，同域所有子页面自动带凭据，不再逐个弹窗。
+- 原先 `/jd/`、`/record/`、`/job/`、`/paotui/` 各自的 Basic Auth 弹窗已移除，改由站点级统一入口接管。
+- **服务器本机请求免认证**：Caddy 用 `@not_local`（`not remote_ip 127.0.0.1 ::1 <服务器公网 IP> 10.0.0.0/8 172.16.0.0/12`）让本机发起的请求跳过认证，保证 `/lst/api/services` 的状态探测和 JobDeck 取数正常；外部访问仍需登录。
+- **应用内登录保留**：supersys、Schedul、计划、Supercut、pc2mb、vtodo 各自的登录页，以及 Architecture / 面试复盘的应用内 Basic Auth，会在站点登录后继续要求应用登录（个人数据敏感服务不放开）。
+- **子域名**：`dsh.wkeeli.cn`、`attu.wkeeli.cn`、`redis.wkeeli.cn` 仍各自独立认证。
+- 配置备份：服务器 `/etc/caddy/Caddyfile.bak-siteauth-*`；可复用片段见 [`deploy/Caddyfile.site-auth.snippet`](deploy/Caddyfile.site-auth.snippet)。
+
 ## 项目结构
 
 ```

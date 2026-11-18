@@ -1,0 +1,12 @@
+# 整站统一登录 —— 放在 /etc/caddy/Caddyfile 的 wkeeli.cn { ... } 块内最上方
+# 作用：浏览器访问 wkeeli.cn 任意路径只需登录一次（Basic Auth，凭据复用原 /job/ 的 wkeeli 账号）；
+#       服务器本机发起的请求（列表状态探测、JobDeck 取数等）免认证。
+# 同时删除 /jd/ /record/ /job/ /paotui/ 各 handler 里原有的 basic_auth 块，避免重复弹窗。
+# 生成密码哈希：caddy hash-password --plaintext '<密码>'
+
+@not_local {
+    not remote_ip 127.0.0.1 ::1 8.133.209.25 10.0.0.0/8 172.16.0.0/12
+}
+basic_auth @not_local {
+    wkeeli $2a$14$A8viV32nG61.HM/s.nUbleFXRLu60EJNvOV2cQiVcXzNPUfPqzfVi
+}
