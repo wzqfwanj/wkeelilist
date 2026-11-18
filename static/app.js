@@ -98,6 +98,7 @@
   function render(data) {
     var frag = document.createDocumentFragment();
     var total = 0;
+    var counts = { online: 0, auth: 0, down: 0 };
 
     data.groups.forEach(function (group) {
       var section = document.createElement("section");
@@ -108,17 +109,19 @@
       var ul = document.createElement("ul");
       ul.className = "rows";
       group.services.forEach(function (svc) {
+        if (svc.hidden) return; // 保留在 API 中供 JobDeck 取数，但不在本页显示
         ul.appendChild(buildRow(svc));
         total += 1;
+        if (counts[svc.state] !== undefined) counts[svc.state] += 1;
       });
       section.appendChild(ul);
       frag.appendChild(section);
     });
 
     listEl.replaceChildren(frag);
-    var summary = total + " 项 · " + data.counts.online + " 在线";
-    if (data.counts.auth) summary += " · " + data.counts.auth + " 需登录";
-    if (data.counts.down) summary += " · " + data.counts.down + " 异常";
+    var summary = total + " 项 · " + counts.online + " 在线";
+    if (counts.auth) summary += " · " + counts.auth + " 需登录";
+    if (counts.down) summary += " · " + counts.down + " 异常";
     summaryEl.textContent = summary;
     checkedEl.textContent = "上次检测 " + formatTime(data.updated_at) + " · 每 60 秒自动刷新";
   }

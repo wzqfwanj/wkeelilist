@@ -58,6 +58,7 @@ python -m venv .venv
 | `url` | 访问地址（点击跳转） |
 | `auth` | 是否需要登录 |
 | `probe_url` | 可选，探测地址；默认使用 `url` |
+| `hidden` | 可选，`true` 时只在 `/api/services` 输出、不在列表页显示（供 JobDeck 等消费方使用） |
 
 服务端每次请求都会重新读取该文件，修改后无需重启（探测则会在下个 60 秒周期生效）。
 
