@@ -164,35 +164,20 @@ h1 .dim {
   font-size: 13px;
 }
 
-.theme-switch {
-  display: flex;
+#theme {
   flex: none;
-  overflow: hidden;
+  padding: 5px 10px;
   border: 1px solid var(--line);
   border-radius: 6px;
-}
-
-.theme-switch button {
-  padding: 5px 10px;
-  border: 0;
   background: transparent;
-  color: var(--muted);
+  color: var(--fg);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 
-.theme-switch button + button {
-  border-left: 1px solid var(--line);
-}
-
-.theme-switch button:hover {
+#theme:hover {
   background: var(--hover);
-}
-
-.theme-switch button[aria-pressed="true"] {
-  background: var(--fg);
-  color: var(--bg);
 }
 
 h2 {
