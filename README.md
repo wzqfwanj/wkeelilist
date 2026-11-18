@@ -14,6 +14,7 @@
   - ◐ 需登录：HTTP 401 / 403，或已知需登录的服务返回登录页
   - ○ 异常：HTTP 5xx 或连接失败（附带状态码）
 - 明暗主题切换，选择保存在浏览器 localStorage，默认跟随系统
+- 右侧实时显示两台服务器（阿里云 / dev）的 CPU 利用率与内存占用（后端每 10 秒采样）
 
 ## 访问控制
 
@@ -29,7 +30,7 @@
 ## 项目结构
 
 ```
-app.py                 Flask 应用：页面 + /api/services + 后台状态探测
+app.py                 Flask 应用：页面 + /api/services + /api/host + 后台状态探测/主机采样
 services.json          服务清单（改这个文件即可增删服务）
 static/index.html      单页列表
 static/style.css       黑白极简样式

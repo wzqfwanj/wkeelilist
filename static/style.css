@@ -32,9 +32,102 @@ body {
 }
 
 main {
-  max-width: 760px;
+  max-width: 1040px;
   margin: 0 auto;
   padding: 56px 20px 72px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: 48px;
+  align-items: start;
+}
+
+.content {
+  min-width: 0;
+}
+
+.host {
+  position: sticky;
+  top: 40px;
+}
+
+.host h2 {
+  margin: 0 0 12px;
+}
+
+.host-card {
+  padding: 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.host-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.host-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.host-addr {
+  overflow: hidden;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric {
+  margin-top: 14px;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metric-row b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.bar {
+  overflow: hidden;
+  height: 4px;
+  margin-top: 6px;
+  background: var(--line);
+  border-radius: 2px;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--fg);
+  transition: width 0.3s ease;
+}
+
+.metric-sub {
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 10.5px;
+}
+
+.host-off {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .head {
@@ -188,6 +281,30 @@ footer {
   margin-top: 44px;
   color: var(--muted);
   font-size: 12px;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .host {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 12px;
+  }
+
+  .host h2 {
+    width: 100%;
+    margin: 24px 0 12px;
+  }
+
+  .host-card {
+    flex: 1 1 160px;
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 560px) {

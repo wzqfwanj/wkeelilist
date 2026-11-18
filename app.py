@@ -26,6 +26,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SERVICES_PATH = os.path.join(BASE_DIR, "services.json")
 CHECK_INTERVAL = 60  # 探测间隔（秒）
 PROBE_TIMEOUT = 6  # 单个服务探测超时（秒）
+HOST_INTERVAL = 10  # 主机指标采样间隔（秒）
+DEV_METRICS_URL = "http://180.76.180.249:9100/metrics"  # dev 机 node_exporter
 TZ = timezone(timedelta(hours=8))  # Asia/Shanghai
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
@@ -35,6 +37,116 @@ SSL_CTX = ssl.create_default_context()
 
 _lock = threading.Lock()
 _snapshot: dict = {"updated_at": None, "results": {}}
+
+_host_lock = threading.Lock()
+_host_stats: dict = {"updated_at": None, "hosts": []}
+_prev_cpu: dict = {}
+
+
+def _cpu_percent(host_id: str, cpu_total: float, cpu_idle: float) -> float | None:
+    """用两次采样的累计 CPU 时间算利用率。"""
+    prev = _prev_cpu.get(host_id)
+    _prev_cpu[host_id] = (cpu_total, cpu_idle)
+    if prev is None:
+        return None
+    d_total = cpu_total - prev[0]
+    d_idle = cpu_idle - prev[1]
+    if d_total <= 0:
+        return None
+    return round(max(0.0, min(100.0, (1 - d_idle / d_total) * 100)), 1)
+
+
+def _mem_percent(mem_total: float | None, mem_available: float | None) -> float | None:
+    if not mem_total or mem_available is None:
+        return None
+    return round(max(0.0, min(100.0, (mem_total - mem_available) / mem_total * 100)), 1)
+
+
+def _read_local_cpu() -> tuple[float, float]:
+    with open("/proc/stat", encoding="utf-8") as fh:
+        values = [int(v) for v in fh.readline().split()[1:]]
+    idle = values[3] + (values[4] if len(values) > 4 else 0)  # idle + iowait
+    return float(sum(values)), float(idle)
+
+
+def _read_local_mem() -> tuple[float, float]:
+    total = available = None
+    with open("/proc/meminfo", encoding="utf-8") as fh:
+        for line in fh:
+            key, _, rest = line.partition(":")
+            if key == "MemTotal":
+                total = float(rest.split()[0]) * 1024
+            elif key == "MemAvailable":
+                available = float(rest.split()[0]) * 1024
+    return total, available
+
+
+def _read_dev() -> tuple[float, float, float, float]:
+    """从 dev 的 node_exporter 抓 CPU/内存指标。"""
+    with urllib.request.urlopen(DEV_METRICS_URL, timeout=PROBE_TIMEOUT) as response:
+        text = response.read().decode("utf-8", "ignore")
+
+    cpu: dict[str, float] = {}
+    mem_total = mem_available = None
+    for line in text.splitlines():
+        if line.startswith("node_cpu_seconds_total{"):
+            try:
+                mode = line.split('mode="', 1)[1].split('"', 1)[0]
+                cpu[mode] = cpu.get(mode, 0.0) + float(line.rsplit(" ", 1)[1])
+            except (IndexError, ValueError):
+                continue
+        elif line.startswith("node_memory_MemTotal_bytes "):
+            mem_total = float(line.rsplit(" ", 1)[1])
+        elif line.startswith("node_memory_MemAvailable_bytes "):
+            mem_available = float(line.rsplit(" ", 1)[1])
+
+    return sum(cpu.values()), cpu.get("idle", 0.0) + cpu.get("iowait", 0.0), mem_total, mem_available
+
+
+def _host_entry(host_id: str, label: str, addr: str, reader) -> dict:
+    try:
+        cpu_total, cpu_idle, mem_total, mem_available = reader()
+    except Exception:
+        return {"id": host_id, "label": label, "addr": addr, "online": False}
+
+    return {
+        "id": host_id,
+        "label": label,
+        "addr": addr,
+        "online": True,
+        "cpu_percent": _cpu_percent(host_id, cpu_total, cpu_idle),
+        "mem_percent": _mem_percent(mem_total, mem_available),
+        "mem_total": mem_total,
+        "mem_used": (mem_total - mem_available) if mem_total and mem_available is not None else None,
+    }
+
+
+def refresh_hosts() -> None:
+    hosts = [
+        _host_entry("aliyun", "阿里云", "8.133.209.25", lambda: (*_read_local_cpu(), *_read_local_mem())),
+        _host_entry("dev", "dev", "180.76.180.249", _read_dev),
+    ]
+    with _host_lock:
+        global _host_stats
+        _host_stats = {
+            "updated_at": datetime.now(TZ).isoformat(timespec="seconds"),
+            "hosts": hosts,
+        }
+
+
+def host_loop() -> None:
+    # 先采一次建立 CPU 时间基线，1 秒后再采样得到首个百分比
+    try:
+        refresh_hosts()
+    except Exception as exc:
+        print(f"[host] {exc}", flush=True)
+    time.sleep(1)
+    while True:
+        try:
+            refresh_hosts()
+        except Exception as exc:
+            print(f"[host] {exc}", flush=True)
+        time.sleep(HOST_INTERVAL)
 
 
 def load_groups() -> list[dict]:
@@ -134,14 +246,23 @@ def api_services():
     return response
 
 
+@app.get("/api/host")
+def api_host():
+    with _host_lock:
+        stats = _host_stats
+    response = jsonify(stats)
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 @app.get("/healthz")
 def healthz():
     return {"ok": True}
 
 
 def start_background() -> None:
-    thread = threading.Thread(target=background_loop, daemon=True, name="status-probe")
-    thread.start()
+    threading.Thread(target=background_loop, daemon=True, name="status-probe").start()
+    threading.Thread(target=host_loop, daemon=True, name="host-metrics").start()
 
 
 start_background()

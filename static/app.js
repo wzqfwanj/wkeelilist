@@ -142,4 +142,94 @@
 
   load();
   setInterval(load, 60000);
+
+  /* ---------- 服务器指标 ---------- */
+
+  var hostEl = document.getElementById("host-list");
+
+  function gb(bytes) {
+    if (bytes === null || bytes === undefined) return "";
+    var value = bytes / 1073741824;
+    return (value >= 10 ? value.toFixed(0) : value.toFixed(1)) + " GB";
+  }
+
+  function hostMetric(name, percent, sub) {
+    var wrap = document.createElement("div");
+    wrap.className = "metric";
+
+    var row = document.createElement("div");
+    row.className = "metric-row";
+    var label = document.createElement("span");
+    label.textContent = name;
+    var value = document.createElement("b");
+    value.textContent = percent === null || percent === undefined ? "—" : Math.round(percent) + "%";
+    row.appendChild(label);
+    row.appendChild(value);
+
+    var bar = document.createElement("div");
+    bar.className = "bar";
+    var fill = document.createElement("i");
+    fill.style.width = (percent || 0) + "%";
+    bar.appendChild(fill);
+
+    wrap.appendChild(row);
+    wrap.appendChild(bar);
+    if (sub) {
+      var subEl = document.createElement("div");
+      subEl.className = "metric-sub";
+      subEl.textContent = sub;
+      wrap.appendChild(subEl);
+    }
+    return wrap;
+  }
+
+  function renderHosts(data) {
+    hostEl.replaceChildren();
+    (data.hosts || []).forEach(function (host) {
+      var card = document.createElement("div");
+      card.className = "host-card";
+
+      var head = document.createElement("div");
+      head.className = "host-head";
+      var name = document.createElement("span");
+      name.className = "host-name";
+      name.textContent = host.label;
+      var addr = document.createElement("span");
+      addr.className = "host-addr";
+      addr.textContent = host.addr || "";
+      head.appendChild(name);
+      head.appendChild(addr);
+      card.appendChild(head);
+
+      var cpu = host.online ? host.cpu_percent : null;
+      var mem = host.online ? host.mem_percent : null;
+      card.appendChild(hostMetric("CPU", cpu, null));
+
+      var memSub = host.online && host.mem_total ? gb(host.mem_used) + " / " + gb(host.mem_total) : null;
+      card.appendChild(hostMetric("内存", mem, memSub));
+
+      if (!host.online) {
+        var off = document.createElement("div");
+        off.className = "host-off";
+        off.textContent = "采集失败";
+        card.appendChild(off);
+      }
+      hostEl.appendChild(card);
+    });
+  }
+
+  function loadHosts() {
+    fetch("api/host", { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(renderHosts)
+      .catch(function () {
+        hostEl.textContent = "服务器指标获取失败";
+      });
+  }
+
+  loadHosts();
+  setInterval(loadHosts, 60000);
 })();
