@@ -1,12 +1,9 @@
-:root {
-  --bg: #ffffff;
-  --fg: #111111;
-  --muted: #8a8a8a;
-  --line: #e8e8e8;
-  --hover: #f6f6f6;
-}
+/* ============================================================
+   wkeeli 在线服务 · 样式（灰色单主题）
+   遵循「前端约束_前端」：仅 :root 一套灰色变量，无主题切换
+   ============================================================ */
 
-[data-theme="gray"] {
+:root {
   --bg: #3a3f47;
   --fg: #f2f3f5;
   --muted: #b3b9c2;
@@ -14,29 +11,20 @@
   --hover: #454c56;
 }
 
-[data-theme="dark"] {
-  --bg: #0b0b0b;
-  --fg: #f0f0f0;
-  --muted: #7f7f7f;
-  --line: #222222;
-  --hover: #151515;
-}
-
 * {
   box-sizing: border-box;
 }
 
 html {
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 14px/1.6 ui-sans-serif, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font: 14px/1.7 ui-sans-serif, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 main {
@@ -45,104 +33,9 @@ main {
   padding: 56px 20px 72px;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 200px;
-  gap: 48px;
-  align-items: start;
-}
-
-.content {
-  min-width: 0;
-}
-
-.host {
-  position: sticky;
-  top: 40px;
-}
-
-.host h2 {
-  margin: 0 0 12px;
-}
-
-.host-card {
-  padding: 14px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
-.host-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.host-name {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.host-addr {
-  overflow: hidden;
-  color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Consolas, monospace;
-  font-size: 10.5px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.metric {
-  margin-top: 14px;
-}
-
-.metric-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.metric-row b {
-  color: var(--fg);
-  font-weight: 600;
-}
-
-.bar {
-  overflow: hidden;
-  height: 4px;
-  margin-top: 6px;
-  background: var(--line);
-  border-radius: 2px;
-}
-
-.bar i {
-  display: block;
-  height: 100%;
-  background: var(--fg);
-  transition: width 0.3s ease;
-}
-
-.metric-sub {
-  margin-top: 3px;
-  color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Consolas, monospace;
-  font-size: 10.5px;
-}
-
-.host-off {
-  margin-top: 10px;
-  color: var(--muted);
-  font-size: 11px;
-}
+/* ---------- 页头 ---------- */
 
 .head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
   margin-bottom: 40px;
 }
 
@@ -153,44 +46,29 @@ h1 {
   letter-spacing: 0.2px;
 }
 
-h1 .dim {
-  color: var(--muted);
-  font-weight: 400;
-}
-
 .sub {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
 }
 
-#theme {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--fg);
-  cursor: pointer;
+/* ---------- 内容区 ---------- */
+
+.content {
+  min-width: 0;
 }
 
-#theme:hover {
-  background: var(--hover);
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: 48px;
+  align-items: start;
 }
 
-#theme svg {
-  display: block;
-  width: 16px;
-  height: 16px;
-}
+/* ---------- 服务列表 ---------- */
 
-h2 {
-  margin: 44px 0 10px;
+#list h2 {
+  margin: 36px 0 10px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
@@ -290,6 +168,97 @@ h2 {
   color: var(--muted);
 }
 
+/* ---------- 服务器状态 ---------- */
+
+.host {
+  position: sticky;
+  top: 40px;
+}
+
+.host h2 {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.host-card {
+  padding: 14px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.host-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.host-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.host-addr {
+  overflow: hidden;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric {
+  margin-top: 14px;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metric-row b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.bar {
+  overflow: hidden;
+  height: 4px;
+  margin-top: 6px;
+  background: var(--line);
+  border-radius: 2px;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--fg);
+  transition: width 0.3s ease;
+}
+
+.metric-sub {
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 10.5px;
+}
+
+.host-off {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* ---------- 页脚 ---------- */
+
 footer {
   display: flex;
   flex-wrap: wrap;
@@ -300,7 +269,9 @@ footer {
   font-size: 12px;
 }
 
-@media (max-width: 860px) {
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 760px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
