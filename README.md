@@ -35,7 +35,7 @@ services.json          服务清单（改这个文件即可增删服务）
 static/index.html      单页列表
 static/style.css       黑白极简样式
 static/app.js          渲染 + 主题切换 + 每 60 秒刷新
-template/              从本项目抽离的可复用纯静态前端模板（列表 + 三主题，双击即可预览）
+template/              从本项目抽离的可复用纯静态页面骨架（页头 + 主题切换 + 内容区，三主题）
 deploy/                服务器部署文件（systemd 单元、Caddy 片段、同步脚本）
 ```
 
