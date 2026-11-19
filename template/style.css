@@ -46,7 +46,7 @@ body {
 }
 
 main {
-  max-width: 1040px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 56px 20px 72px;
 }
@@ -105,24 +105,6 @@ h1 .dim {
   height: 16px;
 }
 
-/* ---------- 两栏布局：左侧内容 + 右侧状态卡 ---------- */
-
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 200px;
-  gap: 48px;
-  align-items: start;
-}
-
-.content {
-  min-width: 0;
-}
-
-.host {
-  position: sticky;
-  top: 40px;
-}
-
 /* ---------- 分组标题 ---------- */
 
 h2 {
@@ -132,10 +114,6 @@ h2 {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-.host h2 {
-  margin: 0 0 12px;
 }
 
 #list section:first-child h2 {
@@ -234,81 +212,6 @@ h2 {
   color: var(--muted);
 }
 
-/* ---------- 右侧状态卡 ---------- */
-
-.host-card {
-  padding: 14px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
-.host-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.host-name {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.host-addr {
-  overflow: hidden;
-  color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Consolas, monospace;
-  font-size: 10.5px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.metric {
-  margin-top: 14px;
-}
-
-.metric-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.metric-row b {
-  color: var(--fg);
-  font-weight: 600;
-}
-
-.bar {
-  overflow: hidden;
-  height: 4px;
-  margin-top: 6px;
-  background: var(--line);
-  border-radius: 2px;
-}
-
-.bar i {
-  display: block;
-  height: 100%;
-  background: var(--fg);
-  transition: width 0.3s ease;
-}
-
-.metric-sub {
-  margin-top: 3px;
-  color: var(--muted);
-  font-family: ui-monospace, "SF Mono", Consolas, monospace;
-  font-size: 10.5px;
-}
-
-.host-off {
-  margin-top: 10px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
 /* ---------- 页脚 ---------- */
 
 footer {
@@ -322,21 +225,6 @@ footer {
 }
 
 /* ---------- 响应式 ---------- */
-
-@media (max-width: 860px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-  }
-
-  .host {
-    position: static;
-  }
-
-  .host h2 {
-    margin-top: 24px;
-  }
-}
 
 @media (max-width: 560px) {
   main {

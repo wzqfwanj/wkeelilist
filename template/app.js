@@ -3,7 +3,6 @@
    ------------------------------------------------------------
    1) 主题：明 / 灰 / 暗，图标按钮循环切换，localStorage 记忆，支持 ?theme=
    2) 列表：把 DEMO.groups 渲染成分组列表
-   3) 状态卡：把 DEMO.hosts 渲染到右侧
    接入真实数据时：把最后的 render(DEMO) 换成
      fetch("/api/xxx").then(r => r.json()).then(render)
    数据结构见 DEMO 注释。
@@ -14,7 +13,6 @@
   var root = document.documentElement;
   var themeBtn = document.getElementById("theme");
   var listEl = document.getElementById("list");
-  var hostEl = document.getElementById("host-list");
   var summaryEl = document.getElementById("summary");
   var checkedEl = document.getElementById("checked");
 
@@ -71,9 +69,16 @@
     applyTheme(next);
   });
 
-  /* ---------- 演示数据（接入接口时替换成真实数据） ---------- */
+  /* ---------- 演示数据（接入接口时替换成真实数据） ----------
+     groups[].services[] 字段：
+       name        服务名（必填）
+       description 一句话说明
+       url         链接（必填）
+       state       online | auth | down | unknown
+       code        可选，异常时显示的 HTTP 状态码
+       latency_ms  可选，悬停显示的耗时
+  ------------------------------------------------------------ */
 
-  var GB = 1073741824;
   var DEMO = {
     updated_at: "2026-01-01T12:00:00+08:00",
     groups: [
@@ -112,26 +117,6 @@
           }
         ]
       }
-    ],
-    hosts: [
-      {
-        label: "服务器一",
-        addr: "192.0.2.10",
-        online: true,
-        cpu_percent: 23,
-        mem_percent: 48,
-        mem_used: 0.8 * GB,
-        mem_total: 1.6 * GB
-      },
-      {
-        label: "服务器二",
-        addr: "192.0.2.11",
-        online: true,
-        cpu_percent: 8,
-        mem_percent: 61,
-        mem_used: 1.9 * GB,
-        mem_total: 3.1 * GB
-      }
     ]
   };
 
@@ -151,13 +136,7 @@
     return iso.replace("T", " ").replace(/([+-]\d{2}:\d{2})$/, " ($1)");
   }
 
-  function gb(bytes) {
-    if (bytes === null || bytes === undefined) return "";
-    var value = bytes / GB;
-    return (value >= 10 ? value.toFixed(0) : value.toFixed(1)) + " GB";
-  }
-
-  /* ---------- 列表 ---------- */
+  /* ---------- 渲染 ---------- */
 
   function buildRow(svc) {
     var a = el("a", "row");
@@ -171,7 +150,7 @@
     main.appendChild(el("span", "url", svc.url.replace(/^https?:\/\//, "")));
 
     var status = el("span", "status " + (svc.state || "unknown"));
-    status.title = svc.latency_ms ? svc.latency_ms + " ms" : "";
+    if (svc.latency_ms) status.title = svc.latency_ms + " ms";
     status.appendChild(el("span", "dot"));
     var label = STATE_LABEL[svc.state] || svc.state;
     if (svc.state === "down" && svc.code) label = "异常 " + svc.code;
@@ -185,14 +164,15 @@
     return li;
   }
 
-  function renderList(groups) {
+  function render(data) {
     var frag = document.createDocumentFragment();
     var total = 0;
     var counts = { online: 0, auth: 0, down: 0 };
 
-    groups.forEach(function (group) {
+    (data.groups || []).forEach(function (group) {
       var section = document.createElement("section");
       section.appendChild(el("h2", "", group.label));
+
       var ul = el("ul", "rows");
       group.services.forEach(function (svc) {
         ul.appendChild(buildRow(svc));
@@ -204,57 +184,10 @@
     });
 
     listEl.replaceChildren(frag);
-    return { total: total, counts: counts };
-  }
 
-  /* ---------- 状态卡 ---------- */
-
-  function hostMetric(name, percent, sub) {
-    var wrap = el("div", "metric");
-    var row = el("div", "metric-row");
-    row.appendChild(el("span", "", name));
-    row.appendChild(el("b", "", percent === null || percent === undefined ? "—" : Math.round(percent) + "%"));
-    var bar = el("div", "bar");
-    var fill = el("i");
-    fill.style.width = (percent || 0) + "%";
-    bar.appendChild(fill);
-    wrap.appendChild(row);
-    wrap.appendChild(bar);
-    if (sub) wrap.appendChild(el("div", "metric-sub", sub));
-    return wrap;
-  }
-
-  function renderHosts(hosts) {
-    var frag = document.createDocumentFragment();
-    hosts.forEach(function (host) {
-      var card = el("div", "host-card");
-
-      var head = el("div", "host-head");
-      head.appendChild(el("span", "host-name", host.label));
-      head.appendChild(el("span", "host-addr", host.addr || ""));
-      card.appendChild(head);
-
-      var cpu = host.online ? host.cpu_percent : null;
-      var mem = host.online ? host.mem_percent : null;
-      card.appendChild(hostMetric("CPU", cpu, null));
-      var memSub = host.online && host.mem_total ? gb(host.mem_used) + " / " + gb(host.mem_total) : null;
-      card.appendChild(hostMetric("内存", mem, memSub));
-
-      if (!host.online) card.appendChild(el("div", "host-off", "采集失败"));
-      frag.appendChild(card);
-    });
-    hostEl.replaceChildren(frag);
-  }
-
-  /* ---------- 总渲染 ---------- */
-
-  function render(data) {
-    var result = renderList(data.groups || []);
-    renderHosts(data.hosts || []);
-
-    var summary = result.total + " 项 · " + result.counts.online + " 在线";
-    if (result.counts.auth) summary += " · " + result.counts.auth + " 需登录";
-    if (result.counts.down) summary += " · " + result.counts.down + " 异常";
+    var summary = total + " 项 · " + counts.online + " 在线";
+    if (counts.auth) summary += " · " + counts.auth + " 需登录";
+    if (counts.down) summary += " · " + counts.down + " 异常";
     summaryEl.textContent = summary;
     checkedEl.textContent = "上次检测 " + formatTime(data.updated_at) + " · 模板演示数据";
   }
