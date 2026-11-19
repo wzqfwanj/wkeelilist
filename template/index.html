@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>服务清单 · 黑白极简模板</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <header class="head">
+      <div>
+        <h1>页面标题 <span class="dim">/ 副标题</span></h1>
+        <p class="sub">一句话说明这个页面是做什么的 · <span id="summary">加载中…</span></p>
+      </div>
+      <button id="theme" type="button" aria-label="切换主题" title="切换主题"></button>
+    </header>
+
+    <div class="layout">
+      <div class="content">
+        <div id="list"></div>
+      </div>
+
+      <aside class="host">
+        <h2>服务器</h2>
+        <div id="host-list"></div>
+      </aside>
+    </div>
+
+    <footer>
+      <span id="checked">—</span>
+      <span>纯 HTML / CSS / JS · 无任何依赖</span>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
