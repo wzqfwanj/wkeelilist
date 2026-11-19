@@ -74,8 +74,6 @@
     var a = document.createElement("a");
     a.className = "row";
     a.href = svc.url;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
 
     var main = document.createElement("span");
     main.className = "main";
