@@ -108,6 +108,13 @@
           "description": "求职导航 · 求职常用 / 其余服务分层，状态与列表同源",
           "url": "https://wkeeli.cn/job/",
           "auth": true
+        },
+        {
+          "id": "phone",
+          "name": "手机模拟器",
+          "description": "网页版安卓手机模拟器 · 锁屏 / 桌面 / 计算器 / 备忘录",
+          "url": "https://wkeeli.cn/phone/",
+          "auth": true
         }
       ]
     },
