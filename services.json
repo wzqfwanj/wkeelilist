@@ -42,8 +42,7 @@
           "name": "Schedul",
           "description": "极简黑白日程表 · 月历 / 当天事件 / 截图收纳",
           "url": "https://wkeeli.cn/schedul/",
-          "auth": true,
-          "hidden": true
+          "auth": true
         },
         {
           "id": "superrecord",
