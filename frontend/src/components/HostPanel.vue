@@ -48,7 +48,7 @@ onUnmounted(() => {
     <h2 class="host-title">服务器</h2>
     <p v-if="failed" class="host-off">服务器指标获取失败</p>
 
-    <div v-for="host in hosts" :key="host.id" class="host-card">
+    <div v-for="(host, index) in hosts" :key="host.id" class="host-card" :style="{ '--i': index }">
       <div class="host-head">
         <span class="host-name">{{ host.label }}</span>
         <span class="host-addr">{{ host.addr }}</span>
@@ -98,6 +98,24 @@ onUnmounted(() => {
   border: 1px solid var(--line);
   border-radius: 8px;
   margin-bottom: 12px;
+  animation: card-in 0.5s ease both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+  transition: border-color 0.2s ease;
+}
+
+.host-card:hover {
+  border-color: var(--accent);
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .host-head {
@@ -149,8 +167,8 @@ onUnmounted(() => {
 .bar i {
   display: block;
   height: 100%;
-  background: var(--fg);
-  transition: width 0.3s ease;
+  background: var(--accent);
+  transition: width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .metric-sub {
