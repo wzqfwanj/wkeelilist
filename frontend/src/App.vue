@@ -34,20 +34,6 @@ main {
   max-width: 1040px;
 }
 
-.head h1 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.head h1::before {
-  content: "";
-  width: 3px;
-  height: 16px;
-  border-radius: 2px;
-  background: var(--accent);
-}
-
 .layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 200px;

@@ -86,7 +86,7 @@ onUnmounted(() => {
     <section v-for="group in visibleGroups" :key="group.id">
       <h2 class="group-title">{{ group.label }}</h2>
       <ul class="rows">
-        <li v-for="(svc, index) in group.services" :key="svc.id" class="row-item" :style="{ '--i': index }">
+        <li v-for="svc in group.services" :key="svc.id" class="row-item">
           <a class="row" :href="svc.url">
             <span class="main">
               <span class="name">{{ svc.name }}</span>
@@ -127,23 +127,9 @@ onUnmounted(() => {
 
 .row-item {
   margin: 0;
-  animation: row-in 0.45s ease both;
-  animation-delay: calc(var(--i, 0) * 24ms);
-}
-
-@keyframes row-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 .row {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -152,30 +138,10 @@ onUnmounted(() => {
   border-bottom: 1px solid var(--line);
   color: inherit;
   text-decoration: none;
-  transition: background-color 0.18s ease, transform 0.18s ease;
-}
-
-.row::before {
-  content: "";
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 0;
-  width: 2px;
-  background: var(--accent);
-  opacity: 0;
-  transform: scaleY(0.4);
-  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
 .row:hover {
   background: var(--hover);
-  transform: translateX(2px);
-}
-
-.row:hover::before {
-  opacity: 1;
-  transform: scaleY(1);
 }
 
 .main {
@@ -225,21 +191,7 @@ onUnmounted(() => {
 }
 
 .status.online .dot {
-  border-color: var(--accent);
-  background: var(--accent);
-  animation: dot-pulse 2.6s ease-out infinite;
-}
-
-@keyframes dot-pulse {
-  0% {
-    box-shadow: 0 0 0 0 var(--accent-soft);
-  }
-  70% {
-    box-shadow: 0 0 0 6px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
+  background: var(--fg);
 }
 
 .status.auth .dot {
@@ -252,7 +204,7 @@ onUnmounted(() => {
 }
 
 .status.online .state {
-  color: var(--accent);
+  color: var(--fg);
 }
 
 .status.down .state {
