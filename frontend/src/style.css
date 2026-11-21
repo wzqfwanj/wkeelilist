@@ -1,0 +1,165 @@
+/* ============================================================
+   黑白极简页面模板 · 全局样式（灰色单主题）
+   ------------------------------------------------------------
+   1) 设计变量：仅一套灰色配色（改这里就能微调色调）
+   2) 基础排版：标题、段落、链接、代码、表格、列表
+   3) 页头
+   4) 内容区 .content（自由写页面）
+   组件私有样式请写在各自 .vue 的 <style scoped> 里。
+   ============================================================ */
+
+:root {
+  --bg: #3a3f47;
+  --fg: #f2f3f5;
+  --muted: #b3b9c2;
+  --line: #4b525c;
+  --hover: #454c56;
+}
+
+/* ---------- 基础 ---------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.7 ui-sans-serif, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 20px 72px;
+}
+
+/* ---------- 页头 ---------- */
+
+.head {
+  margin-bottom: 40px;
+}
+
+h1 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------- 内容区：基础排版 ---------- */
+
+.content {
+  min-width: 0;
+}
+
+.content h2 {
+  margin: 40px 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.content h3 {
+  margin: 28px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.content p {
+  margin: 0 0 14px;
+}
+
+.content a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--muted);
+  text-underline-offset: 3px;
+}
+
+.content a:hover {
+  text-decoration-color: var(--fg);
+}
+
+.content ul,
+.content ol {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.content li {
+  margin: 4px 0;
+}
+
+.content hr {
+  margin: 32px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.content code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--hover);
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 12px;
+}
+
+.content pre {
+  overflow: auto;
+  margin: 0 0 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--hover);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.content pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.content table {
+  width: 100%;
+  margin: 0 0 14px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.content th,
+.content td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.content th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.placeholder {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 560px) {
+  main {
+    padding: 40px 16px 56px;
+  }
+}

@@ -3,8 +3,8 @@
 列出服务器（阿里云 8.133.209.25 + 百度云 dev 机 180.76.180.249）上运行的全部公网服务，并显示实时在线状态。
 
 - 访问地址：<https://wkeeli.cn/lst/>
-- 技术栈：Python 3 + Flask（后端）· 原生 HTML / CSS / JS（前端，无依赖）
-- 风格：极简、黑色 / 灰色单主题（遵循 `开发约束/前端约束_前端`）
+- 技术栈：Python 3 + Flask（后端）· Vue 3 + Vite（前端，`frontend/`，无第三方 UI 库）
+- 风格：极简、灰色单主题（遵循 `开发约束/前端约束_前端` 的 Vue 版规范）
 
 ## 功能
 
@@ -30,23 +30,33 @@
 ## 项目结构
 
 ```
-app.py                 Flask 应用：页面 + /api/services + /api/host + 后台状态探测/主机采样
-services.json          服务清单（改这个文件即可增删服务）
-static/index.html      单页列表
-static/style.css       黑白极简样式
-static/app.js          渲染 + 主题切换 + 每 60 秒刷新
-template/              从本项目抽离的可复用纯静态页面骨架（页头 + 主题切换 + 内容区，三主题）
-deploy/                服务器部署文件（systemd 单元、Caddy 片段、同步脚本）
+app.py                    Flask 应用：页面 + /api/services + /api/host + 后台状态探测/主机采样
+services.json             服务清单（改这个文件即可增删服务）
+frontend/                 Vue 3 + Vite 前端源码
+  src/App.vue             页面根组件（页头 + 内容区 + 侧栏）
+  src/components/         ServiceList.vue / HostPanel.vue
+  src/style.css           灰色单主题设计变量与基础排版
+  dist/                   构建产物（npm run build，git 忽略）
+deploy/                   服务器部署文件（systemd 单元、Caddy 片段、同步脚本）
+static/                   Flask 运行时静态目录（由 dist 部署而来，git 忽略）
+template/                 旧版纯静态模板（历史产物）
 ```
 
 ## 本地运行
 
 ```bash
+# 1) 后端（Flask，提供 /api/services 与 /api/host）
 python -m venv .venv
 .venv/Scripts/pip install flask          # macOS/Linux: .venv/bin/pip
-.venv/Scripts/python app.py
-# 打开 http://127.0.0.1:8330/
+.venv/Scripts/python app.py              # http://127.0.0.1:8330
+
+# 2) 前端（Vue 开发模式，/api 已代理到 127.0.0.1:8330）
+cd frontend
+npm install
+npm run dev                              # http://127.0.0.1:5173
 ```
+
+生产构建：`cd frontend && npm run build`，产物在 `frontend/dist/`。
 
 ## 增删服务
 
@@ -91,6 +101,8 @@ systemctl reload caddy
 ```bash
 bash deploy/deploy.sh
 ```
+
+脚本会自动 `npm run build` 构建 Vue 前端，再把 `frontend/dist/` 与后端文件同步到服务器。
 
 ## 状态判定说明
 

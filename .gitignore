@@ -4,3 +4,10 @@ __pycache__/
 .DS_Store
 Thumbs.db
 preview-*.png
+
+# 前端：依赖与构建产物（源码在 frontend/）
+frontend/node_modules/
+frontend/dist/
+
+# Flask 运行时静态目录：由 frontend/dist 构建产物部署而来，不入库
+static/
