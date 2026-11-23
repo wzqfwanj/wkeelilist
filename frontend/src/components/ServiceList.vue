@@ -11,25 +11,16 @@ const STATE_LABEL = { online: "在线", auth: "需登录", down: "异常", unkno
 const REFRESH_MS = 60000;
 let timer = null;
 
-const visibleGroups = computed(() =>
-  groups.value
-    .map((group) => ({
-      id: group.id,
-      label: group.label,
-      services: group.services.filter((svc) => !svc.hidden),
-    }))
-    .filter((group) => group.services.length > 0)
-);
+// 统一为一个「服务」列表：扁平分组的服务并过滤 hidden
+const allServices = computed(() => groups.value.flatMap((group) => group.services.filter((svc) => !svc.hidden)));
 
-const total = computed(() => visibleGroups.value.reduce((sum, group) => sum + group.services.length, 0));
+const total = computed(() => allServices.value.length);
 
 const counts = computed(() => {
   const result = { online: 0, auth: 0, down: 0 };
-  visibleGroups.value.forEach((group) =>
-    group.services.forEach((svc) => {
-      if (result[svc.state] !== undefined) result[svc.state] += 1;
-    })
-  );
+  allServices.value.forEach((svc) => {
+    if (result[svc.state] !== undefined) result[svc.state] += 1;
+  });
   return result;
 });
 
@@ -83,10 +74,10 @@ onUnmounted(() => {
 <template>
   <div class="list">
     <p v-if="failed" class="hint">状态获取失败</p>
-    <section v-for="group in visibleGroups" :key="group.id">
-      <h2 class="group-title">{{ group.label }}</h2>
+    <section>
+      <h2 class="group-title">服务</h2>
       <ul class="rows">
-        <li v-for="svc in group.services" :key="svc.id" class="row-item">
+        <li v-for="svc in allServices" :key="svc.id" class="row-item">
           <a class="row" :href="svc.url">
             <span class="main">
               <span class="name">{{ svc.name }}</span>
