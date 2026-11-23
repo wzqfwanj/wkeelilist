@@ -114,6 +114,13 @@
           "description": "网页版安卓手机模拟器 · 锁屏 / 桌面 / 计算器 / 备忘录",
           "url": "https://wkeeli.cn/phone/",
           "auth": true
+        },
+        {
+          "id": "context",
+          "name": "超级上下文",
+          "description": "上传资料生成描述，供智能体取用（带令牌的分享链接）",
+          "url": "https://wkeeli.cn/context/",
+          "auth": true
         }
       ]
     },
