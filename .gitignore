@@ -11,3 +11,7 @@ frontend/dist/
 
 # Flask 运行时静态目录：由 frontend/dist 构建产物部署而来，不入库
 static/
+
+# 运行时生成：拖拽排序保存的顺序
+order.json
+order.json.tmp

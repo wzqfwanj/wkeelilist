@@ -20,10 +20,11 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SERVICES_PATH = os.path.join(BASE_DIR, "services.json")
+ORDER_PATH = os.path.join(BASE_DIR, "order.json")
 CHECK_INTERVAL = 60  # 探测间隔（秒）
 PROBE_TIMEOUT = 6  # 单个服务探测超时（秒）
 HOST_INTERVAL = 10  # 主机指标采样间隔（秒）
@@ -41,6 +42,28 @@ _snapshot: dict = {"updated_at": None, "results": {}}
 _host_lock = threading.Lock()
 _host_stats: dict = {"updated_at": None, "hosts": []}
 _prev_cpu: dict = {}
+
+_order_lock = threading.Lock()
+
+
+def load_order() -> list[str]:
+    """读取用户拖拽保存的服务顺序（order.json），不存在则返回空列表。"""
+    try:
+        with open(ORDER_PATH, encoding="utf-8") as fh:
+            data = json.load(fh)
+        order = data.get("order", [])
+        return [item for item in order if isinstance(item, str)]
+    except Exception:
+        return []
+
+
+def save_order(order: list[str]) -> None:
+    """原子写入顺序文件，避免半截文件。"""
+    tmp = ORDER_PATH + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump({"order": order}, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+    os.replace(tmp, ORDER_PATH)
 
 
 def _cpu_percent(host_id: str, cpu_total: float, cpu_idle: float) -> float | None:
@@ -240,10 +263,32 @@ def api_services():
         payload_groups.append({"id": group["id"], "label": group["label"], "services": services})
 
     response = jsonify(
-        {"updated_at": snapshot["updated_at"], "counts": counts, "groups": payload_groups}
+        {
+            "updated_at": snapshot["updated_at"],
+            "counts": counts,
+            "order": load_order(),
+            "groups": payload_groups,
+        }
     )
     response.headers["Cache-Control"] = "no-store"
     return response
+
+
+@app.post("/api/order")
+def api_save_order():
+    """保存前端拖拽后的服务顺序。"""
+    data = request.get_json(silent=True) or {}
+    order = data.get("order")
+    if not isinstance(order, list) or not all(isinstance(item, str) for item in order):
+        return jsonify({"ok": False, "error": "order 必须是字符串数组"}), 400
+    if len(order) > 500:
+        return jsonify({"ok": False, "error": "order 过长"}), 400
+    with _order_lock:
+        try:
+            save_order(order)
+        except OSError as exc:
+            return jsonify({"ok": False, "error": str(exc)}), 500
+    return jsonify({"ok": True, "order": order})
 
 
 @app.get("/api/host")
