@@ -121,6 +121,13 @@
           "description": "上传资料生成描述，供智能体取用（带令牌的分享链接）",
           "url": "https://wkeeli.cn/context/",
           "auth": true
+        },
+        {
+          "id": "control",
+          "name": "手机控制台",
+          "description": "手机远程控制 · 电脑端控制台，手机配对后远程操作",
+          "url": "https://wkeeli.cn/control/",
+          "auth": true
         }
       ]
     },
