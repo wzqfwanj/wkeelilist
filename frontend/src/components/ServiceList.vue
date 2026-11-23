@@ -12,7 +12,11 @@ const draggingId = ref(null);
 const STATE_LABEL = { online: "在线", auth: "需登录", down: "异常", unknown: "未知" };
 const REFRESH_MS = 60000;
 let timer = null;
+
 let dragging = false;
+let suppressClick = false;
+let pending = null;
+let touchBound = false;
 
 // 统一为一个「服务」列表：扁平分组的服务，按用户拖拽保存的顺序排列
 const allServices = computed(() => {
@@ -56,19 +60,15 @@ function updateSummary() {
   emit("summary", summary);
 }
 
-/* ---------- 拖拽排序 ---------- */
+/* ---------- 拖拽排序（无手柄，直接拖行；手机长按后拖） ---------- */
 
-function startDrag(event, svc) {
-  if (event.button !== undefined && event.button !== 0) return;
+function beginDrag(id) {
   dragging = true;
-  draggingId.value = svc.id;
+  draggingId.value = id;
   document.body.style.userSelect = "none";
-  window.addEventListener("pointermove", onDragMove);
-  window.addEventListener("pointerup", endDrag, { once: true });
-  window.addEventListener("pointercancel", endDrag, { once: true });
 }
 
-function onDragMove(event) {
+function moveDrag(clientY) {
   if (!dragging || !draggingId.value) return;
   const rows = Array.from(document.querySelectorAll(".list .row-item")).filter(
     (el) => el.dataset.serviceId !== draggingId.value
@@ -76,7 +76,7 @@ function onDragMove(event) {
   let target = rows.length;
   for (let i = 0; i < rows.length; i += 1) {
     const rect = rows[i].getBoundingClientRect();
-    if (event.clientY < rect.top + rect.height / 2) {
+    if (clientY < rect.top + rect.height / 2) {
       target = i;
       break;
     }
@@ -98,9 +98,120 @@ function endDrag() {
   dragging = false;
   draggingId.value = null;
   document.body.style.userSelect = "";
-  window.removeEventListener("pointermove", onDragMove);
   saveOrder();
 }
+
+let suppressTimer = null;
+
+function setSuppressClick() {
+  suppressClick = true;
+  if (suppressTimer) clearTimeout(suppressTimer);
+  suppressTimer = setTimeout(() => {
+    suppressClick = false;
+  }, 400);
+}
+
+function onRowClick(event) {
+  if (suppressClick) {
+    event.preventDefault();
+    event.stopPropagation();
+    suppressClick = false;
+  }
+}
+
+/* 鼠标 / 触控笔 */
+
+function onRowPointerDown(event, svc) {
+  if (event.pointerType === "touch") return; // 触摸走 touch 事件
+  if (event.button !== 0) return;
+  pending = { id: svc.id, x: event.clientX, y: event.clientY };
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp, { once: true });
+  window.addEventListener("pointercancel", onPointerUp, { once: true });
+}
+
+function onPointerMove(event) {
+  if (!pending) return;
+  if (!dragging) {
+    if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) > 8) {
+      beginDrag(pending.id);
+    }
+    return;
+  }
+  event.preventDefault();
+  moveDrag(event.clientY);
+}
+
+function onPointerUp() {
+  window.removeEventListener("pointermove", onPointerMove);
+  if (dragging) {
+    setSuppressClick();
+    endDrag();
+  }
+  pending = null;
+}
+
+/* 触摸：长按 350ms 进入拖拽，短滑仍然滚动页面 */
+
+function bindTouch() {
+  if (touchBound) return;
+  document.addEventListener("touchmove", onTouchMove, { passive: false });
+  document.addEventListener("touchend", onTouchEnd);
+  document.addEventListener("touchcancel", onTouchEnd);
+  touchBound = true;
+}
+
+function unbindTouch() {
+  if (!touchBound) return;
+  document.removeEventListener("touchmove", onTouchMove);
+  document.removeEventListener("touchend", onTouchEnd);
+  document.removeEventListener("touchcancel", onTouchEnd);
+  touchBound = false;
+}
+
+function onRowTouchStart(event, svc) {
+  if (event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  pending = {
+    id: svc.id,
+    x: touch.clientX,
+    y: touch.clientY,
+    timer: setTimeout(() => {
+      if (pending) beginDrag(pending.id);
+    }, 350),
+  };
+  bindTouch();
+}
+
+function onTouchMove(event) {
+  if (!pending || !event.touches.length) return;
+  const touch = event.touches[0];
+  if (!dragging) {
+    if (Math.hypot(touch.clientX - pending.x, touch.clientY - pending.y) > 10) {
+      cancelTouch();
+    }
+    return;
+  }
+  event.preventDefault();
+  moveDrag(touch.clientY);
+}
+
+function onTouchEnd() {
+  const wasDragging = dragging;
+  cancelTouch();
+  if (wasDragging) {
+    setSuppressClick();
+    endDrag();
+  }
+}
+
+function cancelTouch() {
+  if (pending && pending.timer) clearTimeout(pending.timer);
+  pending = null;
+  unbindTouch();
+}
+
+/* ---------- 数据 ---------- */
 
 async function saveOrder() {
   try {
@@ -113,8 +224,6 @@ async function saveOrder() {
     // 保存失败时保持本地顺序，下个刷新周期会回到已保存顺序
   }
 }
-
-/* ---------- 数据 ---------- */
 
 async function load() {
   try {
@@ -141,7 +250,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (timer) clearInterval(timer);
-  window.removeEventListener("pointermove", onDragMove);
+  window.removeEventListener("pointermove", onPointerMove);
+  unbindTouch();
 });
 </script>
 
@@ -150,7 +260,6 @@ onUnmounted(() => {
     <p v-if="failed" class="hint">状态获取失败</p>
     <section>
       <h2 class="group-title">服务</h2>
-      <p class="order-hint">拖拽左侧手柄可调整顺序</p>
       <ul class="rows">
         <li
           v-for="svc in allServices"
@@ -159,18 +268,15 @@ onUnmounted(() => {
           :data-service-id="svc.id"
           :class="{ 'is-dragging': draggingId === svc.id }"
         >
-          <span class="drag-handle" title="拖拽排序" @pointerdown.stop.prevent="startDrag($event, svc)">
-            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <circle cx="6" cy="3.5" r="1.2" />
-              <circle cx="10" cy="3.5" r="1.2" />
-              <circle cx="6" cy="8" r="1.2" />
-              <circle cx="10" cy="8" r="1.2" />
-              <circle cx="6" cy="12.5" r="1.2" />
-              <circle cx="10" cy="12.5" r="1.2" />
-            </svg>
-          </span>
-
-          <a class="row" :href="svc.url">
+          <a
+            class="row"
+            :href="svc.url"
+            draggable="false"
+            @click="onRowClick"
+            @dragstart.prevent
+            @pointerdown="onRowPointerDown($event, svc)"
+            @touchstart="onRowTouchStart($event, svc)"
+          >
             <span class="main">
               <span class="name">{{ svc.name }}</span>
               <span class="desc">{{ svc.description }}</span>
@@ -189,7 +295,7 @@ onUnmounted(() => {
 
 <style scoped>
 .group-title {
-  margin: 36px 0 6px;
+  margin: 36px 0 10px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 600;
@@ -199,13 +305,6 @@ onUnmounted(() => {
 
 .list section:first-child .group-title {
   margin-top: 0;
-}
-
-.order-hint {
-  margin: 0 0 10px;
-  color: var(--muted);
-  font-size: 11px;
-  opacity: 0.8;
 }
 
 .rows {
@@ -220,57 +319,12 @@ onUnmounted(() => {
   margin: 0;
 }
 
-.drag-handle {
-  position: absolute;
-  top: 50%;
-  left: 7px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 30px;
-  color: var(--muted);
-  opacity: 0.45;
-  cursor: grab;
-  touch-action: none;
-  transform: translateY(-50%);
-  transition: opacity 0.15s ease, color 0.15s ease;
-}
-
-.drag-handle svg {
-  display: block;
-  width: 12px;
-  height: 12px;
-}
-
-.row-item:hover .drag-handle {
-  color: var(--fg);
-  opacity: 1;
-}
-
-.drag-handle:active {
-  cursor: grabbing;
-}
-
-.row-item.is-dragging .row {
-  background: var(--hover);
-  outline: 1px dashed var(--muted);
-  outline-offset: -1px;
-}
-
-.row-item.is-dragging .drag-handle {
-  color: var(--fg);
-  opacity: 1;
-  cursor: grabbing;
-}
-
 .row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 14px 8px 14px 28px;
+  padding: 14px 8px;
   border-bottom: 1px solid var(--line);
   color: inherit;
   text-decoration: none;
@@ -278,6 +332,12 @@ onUnmounted(() => {
 
 .row:hover {
   background: var(--hover);
+}
+
+.row-item.is-dragging .row {
+  background: var(--hover);
+  outline: 1px dashed var(--muted);
+  outline-offset: -1px;
 }
 
 .main {
@@ -354,7 +414,6 @@ onUnmounted(() => {
 @media (max-width: 560px) {
   .row {
     gap: 12px;
-    padding: 14px 8px 14px 26px;
   }
 
   .url {
